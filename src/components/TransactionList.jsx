@@ -3,7 +3,6 @@ import Button from "./Button";
 import { Link } from "react-router-dom";
 
 function TransactionList({ transactions }) {
-  console.log("From TransactionList: ", transactions);
 
   // Convert createdAt to a Date object and extract the time portion
   const transactionTime = new Date(transactions.createdAt).toLocaleTimeString();

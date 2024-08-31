@@ -68,7 +68,6 @@ function SendMoney() {
                   },
                 }
               ).then((response)=>{
-                console.log(response);
                 notify(response.data.message)
                 setTimeout(() => {
                   navigate("/admin/dashboard");

@@ -16,7 +16,6 @@ function User() {
         },
       })
       .then((response) => {
-        console.log("filter api call: ",response);
         setUsers(response.data.user);
       });
   }, [filter]);

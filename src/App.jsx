@@ -55,8 +55,9 @@ import Statement from "./components/Statement";
 import OTP from "./components/OTP";
 
 function App() {
-
+  
   const token = localStorage.getItem("token");
+
   return (
     <>
       <BrowserRouter>

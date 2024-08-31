@@ -17,7 +17,6 @@ function Statement() {
     axios
       .get(`${apiURL}/transaction/allTransaction/${id}`)
       .then((response) => {
-        console.log("From statement: ", response);
         setTransaction(response.data.transaction);
         setSender(response.data.sender);
       })
@@ -51,8 +50,6 @@ function Statement() {
     doc.save("transaction_statement.pdf");
     navigate("/admin/dashboard");
   };
-
-  console.log("Aaune transaction: ", transaction);
 
   return (
     <div>

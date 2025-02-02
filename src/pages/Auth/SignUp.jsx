@@ -8,6 +8,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../../assests/Loader";
 
 const apiURL = import.meta.env.VITE_API_URL;
 
@@ -17,6 +18,7 @@ function SignUp() {
   const [lastname, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setLoading] = useState(false);
 
   // // for Notification or tost
   const notify = (msg) => {
@@ -31,6 +33,34 @@ function SignUp() {
   //do something else
 
   const navigate = useNavigate();
+
+  const handleClick = async () => {
+    setLoading(true);
+    await axios
+      .post(`${apiURL}/user/signup`, {
+        username: email,
+        firstname: firstname,
+        lastname: lastname,
+        password: password,
+      })
+      .then((response) => {
+        console.log(response);
+        localStorage.setItem("token", response.data.token);
+        if (response.data.message) {
+          notify(response.data.message);
+          setTimeout(() => {
+            navigate("/signin");
+          }, 1500);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        notify(err.response.data.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <div className="bg-slate-300 h-screen flex justify-center ">
@@ -63,32 +93,7 @@ function SignUp() {
             placeholder={"Password"}
           />
           <div className="pt-4">
-            <Button
-              onClick={async () => {
-                await axios
-                  .post(`${apiURL}/user/signup`, {
-                    username: email,
-                    firstname: firstname,
-                    lastname: lastname,
-                    password: password,
-                  })
-                  .then((response) => {
-                    console.log(response);
-                    localStorage.setItem("token", response.data.token);
-                    if (response.data.message) {
-                      notify(response.data.message);
-                      setTimeout(() => {
-                        navigate("/signin");
-                      }, 1500);
-                    }
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                    notify(err.response.data.message);
-                  });
-              }}
-              label={"SignUp"}
-            />
+            <Button onClick={handleClick} label={isLoading?<Loader />:"SignUp"} disabled={isLoading}/>
           </div>
           <BottomWarning
             label={"Already have account?"}

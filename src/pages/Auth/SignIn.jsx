@@ -8,14 +8,39 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import OTP from "../../components/OTP";
+import Loader from "../../assests/Loader";
 
 const apiURL = import.meta.env.VITE_API_URL;
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //const [isClicked, setClicked] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+
+  const handleClick = async () => {
+    setLoading(true);
+    await axios
+      .post(`${apiURL}/user/signin`, {
+        username: email,
+        password: password,
+      })
+      .then((response) => {
+        console.log(response.data.message);
+        localStorage.setItem("token", response.data.token);
+        notify(response.data.message);
+        setTimeout(() => {
+          navigate("/admin/dashboard");
+          notify(` Welcome ${response.data.username} !`);
+        }, 2000);
+      })
+      .catch((err) => {
+        console.log("Error in SignIn button : ", err);
+      }).finally(()=>{
+        setLoading(false);
+      });
+  };
 
   //For notification....
 
@@ -48,36 +73,18 @@ function SignIn() {
             placeholder={"*******"}
           />
           <div className="pt-4">
-            <Button
-              label={"SignIn"}
-              onClick={async () => {
-                await axios
-                  .post(`${apiURL}/user/signin`, {
-                    username: email,
-                    password: password,
-                  })
-                  .then((response) => {
-                    console.log(response.data.message);
-                    localStorage.setItem("token", response.data.token);
-                    notify(response.data.message);
-                    setTimeout(() => {
-                      navigate("/admin/dashboard");
-                      notify(` Welcome Back! ${response.data.username} `);
-                    }, 2000);
-                  })
-                  .catch((err) => {
-                    console.log("Error in SignIn button : ", err);
-                  });
-              }}
-            />
+            <Button label={isLoading?<Loader />:"SignIn"} onClick={handleClick} disabled={isLoading}/>
           </div>
           <Link to={"/otp"}>
             <Button
               label={"Forgetted Password ? "}
               onClick={() => {
-                axios.post(`${apiURL}/user/forgetPassword`,{
-                  username: email
-                }).then(res=>console.log(res.message)).catch(err=>console.log(err))
+                axios
+                  .post(`${apiURL}/user/forgetPassword`, {
+                    username: email,
+                  })
+                  .then((res) => console.log(res.message))
+                  .catch((err) => console.log(err));
               }}
             />
           </Link>

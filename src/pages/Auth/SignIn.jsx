@@ -50,16 +50,20 @@ function SignIn() {
           <div className="pt-4">
             <Button
               label={"SignIn"}
-              onClick={() => {
-                axios
+              onClick={async () => {
+                await axios
                   .post(`${apiURL}/user/signin`, {
                     username: email,
                     password: password,
                   })
                   .then((response) => {
                     console.log(response.data.message);
+                    localStorage.setItem("token", response.data.token);
                     notify(response.data.message);
-                    navigate("/admin/dashboard");
+                    setTimeout(() => {
+                      navigate("/admin/dashboard");
+                      notify(` Welcome Back! ${response.data.username} `);
+                    }, 2000);
                   })
                   .catch((err) => {
                     console.log("Error in SignIn button : ", err);

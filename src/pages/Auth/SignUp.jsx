@@ -19,11 +19,16 @@ function SignUp() {
   const [password, setPassword] = useState("");
 
   // // for Notification or tost
-  const notify = (msg)=>{
+  const notify = (msg) => {
     const id = toast.loading("Please wait...");
-    toast.update(id, {render: msg, type: "success", isLoading: false, autoClose: 1000});
+    toast.update(id, {
+      render: msg,
+      type: "success",
+      isLoading: false,
+      autoClose: 1000,
+    });
   };
-//do something else
+  //do something else
 
   const navigate = useNavigate();
 
@@ -60,25 +65,27 @@ function SignUp() {
           <div className="pt-4">
             <Button
               onClick={async () => {
-                await axios.post(
-                  `${apiURL}/user/signup`,
-                  {
+                await axios
+                  .post(`${apiURL}/user/signup`, {
                     username: email,
                     firstname: firstname,
                     lastname: lastname,
                     password: password,
-                  }
-                ).then((response)=>{
-                  console.log(response);
-                  localStorage.setItem("token", response.data.token);
-                  notify(response.data.message);
-                  if(response.data.message){
-                    navigate("/signin");
-                  }
-                }).catch((err)=>{
-                  console.log(err);
-                  notify(err.response.data.message);
-                })
+                  })
+                  .then((response) => {
+                    console.log(response);
+                    localStorage.setItem("token", response.data.token);
+                    if (response.data.message) {
+                      notify(response.data.message);
+                      setTimeout(() => {
+                        navigate("/signin");
+                      }, 1500);
+                    }
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                    notify(err.response.data.message);
+                  });
               }}
               label={"SignUp"}
             />
